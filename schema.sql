@@ -10,5 +10,5 @@ CREATE TABLE jobs (
     description TEXT,
     salary INTEGER,
     participants INTEGER,
-    employee_id INTEGER REFERENCES users
+    employee_id INTEGER REFERENCES employees
 );

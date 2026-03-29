@@ -23,6 +23,26 @@
   <p>
     <a href="/new_shift">Uusi työvuoro</a>
   </p>
+
+  <h2>Työvuorot</h2>
+
+  <ul>
+  {% for job in jobs %}
+    <li>
+      <a href="/job/{{ job['id'] }}">
+        {{ job['title'] }} - {{ job['description'] }}
+      </a>
+      | <a href="/job/{{ job['id'] }}/edit">Muokkaa</a>
+      | 
+      <form action="/job/{{ job['id'] }}/delete" method="POST" style="display:inline">
+          <button type="submit" onclick="return confirm('Haluatko varmasti poistaa tämän työvuoron?')">
+              Poista
+          </button>
+      </form>
+    </li>
+  {% endfor %}
+</ul>
+
 </body>
 
 </html>

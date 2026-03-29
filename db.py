@@ -7,17 +7,25 @@ def get_connection():
     con.row_factory = sqlite3.Row
     return con
 
-def execute(sql, params=[]):
+def execute(sql, params=None):
+    if params is None:
+        params = []
+
     con = get_connection()
-    result = con.execute(sql, params)
+    cursor = con.execute(sql, params)
     con.commit()
-    g.last_insert_id = result.lastrowid
+
+    g.last_insert_id = cursor.lastrowid
+
     con.close()
 
 def last_insert_id():
-    return g.last_insert_id    
-    
-def query(sql, params=[]):
+    return getattr(g, "last_insert_id", None)
+
+def query(sql, params=None):
+    if params is None:
+        params = []
+
     con = get_connection()
     result = con.execute(sql, params).fetchall()
     con.close()
