@@ -23,10 +23,16 @@ Asennusohjeet:
 
 Tietokannan luominen:
 
+Powershell:
+- Get-Content schema.sql | sqlite3 database.db
+
+CMD:
 - sqlite3 database.db < schema.sql
 
 Sovelluksen käynnistäminen:
 
 - python app.py
+
+- flask run
 
 - Sovellus käynnistyy osoitteeseen: http://127.0.0.1:5000/
