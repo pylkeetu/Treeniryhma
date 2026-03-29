@@ -54,7 +54,7 @@ def create():
     try:
         conn = sqlite3.connect("database.db")
         c = conn.cursor()
-        sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)"
+        sql = "INSERT INTO employees (username, password_hash) VALUES (?, ?)"
         c.execute(sql, [username, password_hash])
         conn.commit()
     except sqlite3.IntegrityError:
@@ -73,7 +73,7 @@ def login():
         username = request.form["username"]
         password = request.form["password"]
     
-        sql = "SELECT id, password_hash FROM users WHERE username = ?"
+        sql = "SELECT id, password_hash FROM employees WHERE username = ?"
         result = db.query(sql, [username])[0]
         employee_id = result[0]
         password_hash = result[1]
