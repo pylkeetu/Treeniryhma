@@ -4,7 +4,7 @@ CREATE TABLE employees (
     password_hash TEXT
 );
 
-CREATE TABLE jobs (
+CREATE TABLE shifts (
     id INTEGER PRIMARY KEY,
     title TEXT,
     description TEXT,

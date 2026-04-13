@@ -8,42 +8,72 @@ app.secret_key = config.secret_key
 
 @app.route("/")
 def index():
-    all_jobs = db.query("SELECT * FROM jobs")
-    return render_template("index.html", jobs=all_jobs)
+    all_shifts = db.query("SELECT * FROM shifts")
+    return render_template("index.html", shifts=all_shifts)
 
-@app.route("/job/<int:item_id>")
-def show_job(item_id):
-    result = db.query("SELECT * FROM jobs WHERE id = ?", [item_id])
+@app.route("/shift/<int:item_id>")
+def show_shift(item_id):
+    result = db.query("SELECT * FROM shifts WHERE id = ?", [item_id])
     if not result:
         return "Työtä ei löydetty", 404
 
-    job = result[0]
-    return render_template("show_job.html", job=job)
+    shift = result[0]
+    return render_template("show_shift.html", shift=shift)
 
-@app.route("/job/<int:item_id>/edit", methods=["GET"])
-def edit_job_form(item_id):
-    result = db.query("SELECT * FROM jobs WHERE id = ?", [item_id])
+@app.route("/shift/<int:item_id>/edit", methods=["GET"])
+def edit_shift_form(item_id):
+    if "employee_id" not in session:
+        return "Kirjaudu sisään"
+
+    result = db.query("SELECT * FROM shifts WHERE id = ?", [item_id])
     if not result:
-        return "Työtä ei löydetty", 404
-    job = result[0]
-    return render_template("edit_job.html", job=job)
+        return "Työvuoroa ei löydy", 404
 
-@app.route("/job/<int:item_id>/edit", methods=["POST"])
-def edit_job(item_id):
+    shift = result[0]
+
+    if shift["employee_id"] != session["employee_id"]:
+        return "Ei oikeuksia", 403
+
+    return render_template("edit_shift.html", shift=shift)
+
+@app.route("/shift/<int:item_id>/edit", methods=["POST"])
+def edit_shift(item_id):
+    if "employee_id" not in session:
+        return "Kirjaudu sisään"
+
+    result = db.query("SELECT employee_id FROM shifts WHERE id = ?", [item_id])
+    if not result:
+        return "Ei löydy", 404
+
+    if result[0][0] != session["employee_id"]:
+        return "Ei oikeuksia", 403
+
     title = request.form["title"]
     description = request.form["description"]
     participants = request.form["participants"]
 
     db.execute(
-        "UPDATE jobs SET title = ?, description = ?, participants = ? WHERE id = ?",
+        "UPDATE shifts SET title = ?, description = ?, participants = ? WHERE id = ?",
         [title, description, participants, item_id]
     )
-    return redirect(f"/job/{item_id}")
 
-@app.route("/job/<int:item_id>/delete", methods=["POST"])
-def delete_job(item_id):
-    db.execute("DELETE FROM jobs WHERE id = ?", [item_id])
-    return render_template("job_deleted.html")
+    return redirect(f"/shift/{item_id}")
+
+@app.route("/shift/<int:item_id>/delete", methods=["POST"])
+def delete_shift(item_id):
+    if "employee_id" not in session:
+        return "Kirjaudu sisään"
+
+    result = db.query("SELECT employee_id FROM shifts WHERE id = ?", [item_id])
+    if not result:
+        return "Ei löydy", 404
+
+    # 🔴 TÄRKEIN RIVI
+    if result[0][0] != session["employee_id"]:
+        return "Ei oikeuksia", 403
+
+    db.execute("DELETE FROM shifts WHERE id = ?", [item_id])
+    return redirect("/")
 
 @app.route("/new_shift")
 def new_shift():
@@ -57,7 +87,7 @@ def create_shift():
     employee_id = session.get("employee_id")
 
     db.execute(
-        "INSERT INTO jobs (title, description, participants, employee_id) VALUES (?, ?, ?, ?)",
+        "INSERT INTO shifts (title, description, participants, employee_id) VALUES (?, ?, ?, ?)",
         [title, description, participants, employee_id]
     )
 
@@ -88,7 +118,7 @@ def create():
     except:
         return "VIRHE: tunnus on jo varattu"
 
-    return "Tunnus luotu"
+    return redirect("/")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():

@@ -15,30 +15,37 @@
   {% endif %}
 
   <p>
-    <a href="/login">Kirjaudu sisään</a>
-    <a href="/register">Luo tunnus</a>
-    <a href="/logout">Kirjaudu ulos</a>
+    {% if session.username %}
+      <a href="/logout">Kirjaudu ulos</a>
+    {% else %}
+      <a href="/login">Kirjaudu sisään</a>
+      <a href="/register">Luo tunnus</a>
+    {% endif %}
   </p>
 
+  {% if session.username %}
   <p>
     <a href="/new_shift">Uusi työvuoro</a>
   </p>
+  {% endif %}
 
   <h2>Työvuorot</h2>
 
   <ul>
-  {% for job in jobs %}
+  {% for shift in shifts %}
     <li>
-      <a href="/job/{{ job['id'] }}">
-        {{ job['title'] }} - {{ job['description'] }}
+      <a href="/shift/{{ shift['id'] }}">
+        {{ shift['title'] }} - {{ shift['description'] }}
       </a>
-      | <a href="/job/{{ job['id'] }}/edit">Muokkaa</a>
-      | 
-      <form action="/job/{{ job['id'] }}/delete" method="POST" style="display:inline">
-          <button type="submit" onclick="return confirm('Haluatko varmasti poistaa tämän työvuoron?')">
-              Poista
-          </button>
-      </form>
+{% if session.employee_id == shift['employee_id'] %}
+  | <a href="/shift/{{ shift['id'] }}/edit">Muokkaa</a>
+  | 
+  <form action="/shift/{{ shift['id'] }}/delete" method="POST" style="display:inline">
+      <button type="submit" onclick="return confirm('Haluatko varmasti poistaa tämän työvuoron?')">
+          Poista
+      </button>
+  </form>
+{% endif %}
     </li>
   {% endfor %}
 </ul>

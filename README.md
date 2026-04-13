@@ -3,18 +3,18 @@ Alkuperäiset tavoitteet:
 - Käyttäjä pystyy luomaan tunnuksen ja kirjautumaan sisään sovellukseen.
 - Käyttäjä pystyy lisäämään, muokkaamaan ja poistamaan työvuoroja.
 - Käyttäjä pystyy lisäämään tietoja työvuoroon.
-- Käyttäjä näkee sovellukseen lisätyt ilmoitukset.
-- Käyttäjä pystyy etsimään työvuoroja hakusanalla.
+- Käyttäjä näkee sovellukseen lisätyt työvuorot ja niiden tiedot
+- Käyttäjä pystyy etsimään työvuoroja hakusanalla (teemoittain).
 - Sovelluksessa on käyttäjäsivut, jotka näyttävät tilastoja ja käyttäjän lisäämät ilmoitukset koskien työvuoroja.
 - Käyttäjä pystyy valitsemaan työvuorolle yhden tai useamman luokittelun (esim. mikä työ on kyseessä, teema, kohderyhmä).
 - Käyttäjä pystyy kommentoimaan työvuoroja
-Lisättyjä tavotteita:
-- Käyttäjä pystyy valitsemaan vapaana olevia työvuoroja
+
+Lisättyjä tavotteita(tulossa myöhemmin):
+
+- Käyttäjän tulee pystyä valitsemaan vapaana olevia työvuoroja
 
 Tämänhetkinen tilanne:
-- Käyttäjä pystyy rekisteröitymään
-- Käyttäjä pystyy kirjautumaan
-- Käyttäjä pystyy lisäämään, muokkaamaan ja poistamaan työvuoron
+- Kaikki muut toiminnot löytyvät välipalautuksen 2 mukaisesti paitsi mahdollisuus etsiä tietokohteita hakusanalla tai muulla perusteella.
 
 Asennusohjeet:
 - Kloonaa repositorio: git clone https://github.com/pylkeetu/Tyovuorojarjestelma.git
