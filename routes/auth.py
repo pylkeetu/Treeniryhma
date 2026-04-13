@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, session
+from flask import Blueprint, render_template, request, redirect, session, flash
 import db
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -30,6 +30,7 @@ def create():
     except:
         return "VIRHE: tunnus varattu"
 
+    flash("Tunnus luotu onnistuneesti, voit nyt kirjautua sisään.")
     return redirect("/")
 
 @auth_bp.route("/login", methods=["GET", "POST"])

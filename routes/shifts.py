@@ -1,12 +1,26 @@
-from flask import Blueprint, render_template, request, redirect, session
+from flask import Blueprint, render_template, request, redirect, session, flash
 import db
 
 shifts_bp = Blueprint("shifts", __name__)
 
 @shifts_bp.route("/")
 def index():
-    shifts = db.query("SELECT * FROM shifts")
-    return render_template("index.html", shifts=shifts)
+    search = request.args.get("q")
+
+    if search:
+        all_shifts = db.query(
+            "SELECT * FROM shifts WHERE title LIKE ? OR description LIKE ?",
+            [f"%{search}%", f"%{search}%"]
+        )
+
+        if all_shifts:
+            flash("Työvuoro löytyi", "success")
+        else:
+            flash("Työvuoroa ei löydetty", "error")
+    else:
+        all_shifts = db.query("SELECT * FROM shifts")
+
+    return render_template("index.html", shifts=all_shifts)
 
 @shifts_bp.route("/shift/<int:item_id>")
 def show_shift(item_id):

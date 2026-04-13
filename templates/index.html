@@ -8,6 +8,20 @@
 <body>
   <h1>Työvuorojärjestelmä</h1>
 
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+
+      {% if category == "success" %}
+        <p style="color: green;">{{ message }}</p>
+      {% elif category == "error" %}
+        <p style="color: red;">{{ message }}</p>
+      {% endif %}
+
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
   {% if session.username %}
   <p>
     Olet kirjautunut nimellä {{ session.username }}, olet työntekijä numero {{ session.employee_id }}
@@ -30,6 +44,11 @@
   {% endif %}
 
   <h2>Työvuorot</h2>
+
+  <form method="GET" action="/">
+    <input type="text" name="q" placeholder="Etsi työvuoroja">
+    <button type="submit">Hae</button>
+  </form>
 
   <ul>
   {% for shift in shifts %}
