@@ -51,6 +51,10 @@ def create_shift():
 
 @shifts_bp.route("/shift/<int:item_id>/edit", methods=["GET"])
 def edit_form(item_id):
+
+    if "employee_id" not in session:
+        return redirect("/login")
+    
     result = db.query("SELECT * FROM shifts WHERE id = ?", [item_id])
 
     if not result:
