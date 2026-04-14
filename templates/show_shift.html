@@ -1,7 +1,7 @@
 <h1>{{ shift['title'] }}</h1>
 <p>{{ shift['description'] }}</p>
 <p>Osallistujat: {{ shift['participants'] }}</p>
-<p>Lisätty työntekijän ID: {{ shift['employee_id'] }}</p>
+<p>Työvuoron tekijä: {{ shift.username }}</p>
 
 <a href="/shift/{{ shift['id'] }}/edit">Muokkaa</a>
 

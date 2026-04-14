@@ -24,7 +24,14 @@ def index():
 
 @shifts_bp.route("/shift/<int:item_id>")
 def show_shift(item_id):
-    result = db.query("SELECT * FROM shifts WHERE id = ?", [item_id])
+
+    result = db.query("""
+        SELECT shifts.*, employees.username
+        FROM shifts
+        JOIN employees ON shifts.employee_id = employees.id
+        WHERE shifts.id = ?
+    """, [item_id])
+
     if not result:
         return "Ei löydy", 404
 
@@ -32,7 +39,7 @@ def show_shift(item_id):
 
 @shifts_bp.route("/new_shift")
 def new_shift():
-    categories = db.query("SELECT * FROM categories").fetchall()
+    categories = db.query("SELECT * FROM categories")
     return render_template("new_shift.html", categories=categories)
 
 
@@ -42,24 +49,30 @@ def create_shift():
     if "employee_id" not in session:
         return redirect("/login")
 
-    title = request.form["title"]
     description = request.form["description"]
     participants = request.form["participants"]
     employee_id = session["employee_id"]
-    category_ids = request.form.getlist("categories")
+    category_id = request.form["category"]
 
-    result = db.execute(
+    cat = db.query(
+        "SELECT name FROM categories WHERE id = ?",
+        [category_id]
+    )
+
+    if not cat:
+        return "Kategoria ei löydy", 400
+
+    title = cat[0]["name"]
+
+    shift_id = db.execute(
         "INSERT INTO shifts (title, description, participants, employee_id) VALUES (?, ?, ?, ?)",
         [title, description, participants, employee_id]
     )
 
-    shift_id = result.lastrowid
-
-    for cid in category_ids:
-        db.execute(
-            "INSERT INTO shift_categories (shift_id, category_id) VALUES (?, ?)",
-            [shift_id, cid]
-        )
+    db.execute(
+        "INSERT INTO shift_categories (shift_id, category_id) VALUES (?, ?)",
+        [shift_id, category_id]
+    )
 
     return redirect("/")
 

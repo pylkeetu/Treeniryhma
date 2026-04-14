@@ -5,32 +5,38 @@
   <title>Uusi työvuoro</title>
 </head>
 
-<label>Kategoria:</label><br>
-
-<div style="height:100px; overflow-y:scroll; border:1px solid #ccc;">
-  {% for category in categories %}
-    <input type="checkbox" name="categories" value="{{ category.id }}">
-    {{ category.name }}<br>
-  {% endfor %}
-</div>
-
 <body>
-  <h1>Uusi työvuoro</h1>
-  <form action="/create_shift" method="post">
-    <p>
-      Otsikko: <br />
-      <input type="text" name="title" />
-    </p>
-    <p>
-      Kuvaus: <br />
-      <textarea name="description" rows="8" cols="60"></textarea>
-    </p>
-    <p>
-      Osallistujien määrä: <br />
-      <input type="int" name="participants" size="5" />
-    </p>
-    <input type="submit" value="Luo työvuoro" />
-  </form>
-</body>
 
+<h1>Uusi työvuoro</h1>
+
+<form action="/create_shift" method="post">
+
+  <p>
+    <label>Valitse kategoria (otsikko):</label><br>
+
+    <div style="max-height: 80px; overflow-y: auto; border: 1px solid #ccc; padding: 5px; width: 250px;">
+      {% for category in categories %}
+        <label>
+          <input type="radio" name="category" value="{{ category.id }}" required>
+          {{ category.name }}
+        </label><br>
+      {% endfor %}
+    </div>
+  </p>
+
+  <p>
+    Kuvaus: <br />
+    <textarea name="description" rows="8" cols="60"></textarea>
+  </p>
+
+  <p>
+    Osallistujien määrä: <br />
+    <input type="number" name="participants" />
+  </p>
+
+  <input type="submit" value="Luo työvuoro" />
+
+</form>
+
+</body>
 </html>

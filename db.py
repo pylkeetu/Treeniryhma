@@ -15,9 +15,11 @@ def execute(sql, params=None):
     cursor = con.execute(sql, params)
     con.commit()
 
-    g.last_insert_id = cursor.lastrowid
+    last_id = cursor.lastrowid
 
     con.close()
+
+    return last_id
 
 def last_insert_id():
     return getattr(g, "last_insert_id", None)
