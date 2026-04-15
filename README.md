@@ -20,8 +20,9 @@ Asennusohjeet:
 - Kloonaa repositorio: git clone https://github.com/pylkeetu/Tyovuorojarjestelma.git
 - Siirry projektikansioon: cd Tyovuorojarjestelma
 - Luo virtuaaliympäristö: python -m venv venv
-- Aktivoi virtuaaliympäristö: venv\Scripts\activate
-- Asenna riippuvuudet: pip install -r requirements.txt
+- Aktivoi virtuaaliympäristö: venv\Scripts\activate (Windows)
+- Aktivoi virtuaaliympäristö: source venv/bin/activate (Mac/Linux)
+- Asenna riippuvuudet: pip install -r requirements.txt ja pip install flask-wtf
 
 Tietokannan luominen:
 
@@ -32,8 +33,6 @@ CMD:
 - sqlite3 database.db < schema.sql
 
 Sovelluksen käynnistäminen:
-
-- python app.py
 
 - flask run
 
