@@ -1,11 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Työvuoro poistettu</title>
-</head>
-<body>
-    <h1>Työvuoro poistettu</h1>
-    <p>Työvuoro on poistettu onnistuneesti.</p>
-    <a href="/">Palaa etusivulle</a>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Työvuoro poistettu{% endblock %}
+
+{% block content %}
+
+<h1>Työvuoro poistettu</h1>
+<p>Työvuoro on poistettu onnistuneesti.</p>
+
+<a href="/">Palaa etusivulle</a>
+
+{% endblock %}

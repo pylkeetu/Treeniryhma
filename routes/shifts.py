@@ -3,6 +3,23 @@ import db
 
 shifts_bp = Blueprint("shifts", __name__)
 
+def validate_shift(description, participants):
+    if len(description) > 100:
+        return "Kuvaus saa olla enintään 100 merkkiä"
+
+    try:
+        participants = int(participants)
+    except ValueError:
+        return "Osallistujien määrän pitää olla numero"
+
+    if participants < 1:
+        return "Osallistujia pitää olla vähintään 1"
+
+    if participants > 100:
+        return "Osallistujia voi olla enintään 100"
+
+    return None
+
 @shifts_bp.route("/")
 def index():
     search = request.args.get("q")
@@ -19,8 +36,10 @@ def index():
             flash("Työvuoroa ei löydetty", "error")
     else:
         all_shifts = db.query("SELECT * FROM shifts")
+    
+    users = db.query("SELECT id, username FROM employees")
 
-    return render_template("index.html", shifts=all_shifts)
+    return render_template("index.html", shifts=all_shifts, users=users)
 
 @shifts_bp.route("/shift/<int:item_id>")
 def show_shift(item_id):
@@ -66,10 +85,20 @@ def create_shift():
     if "employee_id" not in session:
         return redirect("/login")
 
-    description = request.form["description"]
-    participants = request.form["participants"]
+    description = request.form.get("description", "").strip()
+    participants = request.form.get("participants", "").strip()
     employee_id = session["employee_id"]
-    category_id = request.form["category"]
+
+    category_id = request.form.get("category")
+
+    error = validate_shift(description, participants)
+    if error:
+        flash(error, "error")
+        return redirect("/new_shift")
+
+    if not category_id:
+        flash("Valitse kategoria", "error")
+        return redirect("/new_shift")
 
     cat = db.query(
         "SELECT name FROM categories WHERE id = ?",
@@ -77,12 +106,16 @@ def create_shift():
     )
 
     if not cat:
-        return "Kategoria ei löydy", 400
+        flash("Kategoria ei löydy", "error")
+        return redirect("/new_shift")
 
     title = cat[0]["name"]
 
     shift_id = db.execute(
-        "INSERT INTO shifts (title, description, participants, employee_id) VALUES (?, ?, ?, ?)",
+        """
+        INSERT INTO shifts (title, description, participants, employee_id)
+        VALUES (?, ?, ?, ?)
+        """,
         [title, description, participants, employee_id]
     )
 
@@ -98,7 +131,7 @@ def edit_form(item_id):
 
     if "employee_id" not in session:
         return redirect("/login")
-    
+
     result = db.query("SELECT * FROM shifts WHERE id = ?", [item_id])
 
     if not result:
@@ -109,18 +142,52 @@ def edit_form(item_id):
     if shift["employee_id"] != session["employee_id"]:
         return "Ei oikeuksia", 403
 
-    return render_template("edit_shift.html", shift=shift)
+    categories = db.query("SELECT * FROM categories")
+
+    return render_template("edit_shift.html", shift=shift, categories=categories)
 
 @shifts_bp.route("/shift/<int:item_id>/edit", methods=["POST"])
 def edit(item_id):
-    result = db.query("SELECT employee_id FROM shifts WHERE id = ?", [item_id])
+
+    result = db.query(
+        "SELECT employee_id FROM shifts WHERE id = ?",
+        [item_id]
+    )
 
     if result[0][0] != session["employee_id"]:
         return "Ei oikeuksia", 403
 
+    description = request.form.get("description", "")
+    participants = request.form.get("participants", "")
+    category_id = request.form.get("category")
+
+    error = validate_shift(description, participants)
+    if error:
+        flash(error, "error")
+        return redirect(f"/shift/{item_id}/edit")
+
+    if not category_id:
+        flash("Valitse kategoria", "error")
+        return redirect(f"/shift/{item_id}/edit")
+
+    cat = db.query(
+        "SELECT name FROM categories WHERE id = ?",
+        [category_id]
+    )
+
+    if not cat:
+        flash("Kategoria ei löydy", "error")
+        return redirect(f"/shift/{item_id}/edit")
+
+    title = cat[0]["name"]
+
     db.execute(
-        "UPDATE shifts SET title = ?, description = ?, participants = ? WHERE id = ?",
-        [request.form["title"], request.form["description"], request.form["participants"], item_id]
+        """
+        UPDATE shifts
+        SET title = ?, description = ?, participants = ?
+        WHERE id = ?
+        """,
+        [title, description, participants, item_id]
     )
 
     return redirect(f"/shift/{item_id}")
@@ -156,6 +223,10 @@ def add_comment(shift_id):
 
     content = request.form["content"]
     employee_id = session["employee_id"]
+
+    if len(content) > 100:
+        flash("Kommentti saa olla enintään 100 merkkiä", "error")
+        return redirect(f"/shift/{shift_id}")
 
     db.execute(
         "INSERT INTO comments (content, employee_id, shift_id) VALUES (?, ?, ?)",

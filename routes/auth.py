@@ -35,6 +35,9 @@ def create():
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
+    if "employee_id" in session:
+        return redirect("/")
+
     if request.method == "GET":
         return render_template("login.html")
 
@@ -47,17 +50,21 @@ def login():
     )
 
     if not result:
-        return "VIRHE"
+        flash("Väärä käyttäjätunnus tai salasana", "error")
+        return redirect("/login")
 
-    employee_id = result[0][0]
-    password_hash = result[0][1]
+    employee_id = result[0]["id"]
+    password_hash = result[0]["password_hash"]
 
     if check_password_hash(password_hash, password):
         session["employee_id"] = employee_id
         session["username"] = username
+
+        flash("Kirjautuminen onnistui", "success")
         return redirect("/")
     else:
-        return "VIRHE"
+        flash("Väärä käyttäjätunnus tai salasana", "error")
+        return redirect("/login")
     
 @auth_bp.route("/logout")
 def logout():
@@ -67,6 +74,14 @@ def logout():
 
 @auth_bp.route("/user/<int:user_id>")
 def user_page(user_id):
+
+    user = db.query(
+        "SELECT id, username FROM employees WHERE id = ?",
+        [user_id]
+    )
+
+    if not user:
+        return "Käyttäjää ei löydy", 404
 
     shifts = db.query(
         "SELECT * FROM shifts WHERE employee_id = ?",
@@ -82,4 +97,7 @@ def user_page(user_id):
         [user_id]
     )[0]
 
-    return render_template("user.html", shifts=shifts, stats=stats)
+    return render_template("user.html",
+                         user=user[0],
+                         shifts=shifts,
+                         stats=stats)

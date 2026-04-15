@@ -1,38 +1,48 @@
-<h1>{{ shift['title'] }}</h1>
-<p>{{ shift['description'] }}</p>
-<p>Osallistujat: {{ shift['participants'] }}</p>
+<h1>{{ shift.title }}</h1>
+
+<p>{{ shift.description }}</p>
+
+<p>Osallistujat: {{ shift.participants }}</p>
 <p>Työvuoron tekijä: {{ shift.username }}</p>
 
-<a href="/shift/{{ shift['id'] }}/edit">Muokkaa</a>
+<a href="/shift/{{ shift.id }}/edit">Muokkaa</a>
 
-<form action="/shift/{{ shift['id'] }}/delete" method="POST" style="display:inline">
-    <button type="submit" onclick="return confirm('Haluatko varmasti poistaa tämän työvuoron?')">
-        Poista
-    </button>
+<!-- Poista -->
+<form action="/shift/{{ shift.id }}/delete" method="POST" style="display:inline">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+  <button type="submit"
+          onclick="return confirm('Haluatko varmasti poistaa tämän työvuoron?')">
+    Poista
+  </button>
 </form>
+
+<hr>
 
 <h3>Kommentit</h3>
 
-<ul>
-{% for c in categories %}
-  <li>{{ c.name }}</li>
-{% endfor %}
-</ul>
+{% if comments|length == 0 %}
+  <p>Ei kommentteja vielä</p>
+{% endif %}
 
 <ul>
 {% for comment in comments %}
   <li>
     <b>{{ comment.username }}</b>:
     {{ comment.content }}
-    <small>({{ comment.created_at }})</small>
+    <small>({{ comment.created_at | localtime}})</small>
   </li>
 {% endfor %}
 </ul>
 
 <form method="POST" action="/shift/{{ shift.id }}/comment">
-  <textarea name="content" required></textarea>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+  <textarea name="content" maxlength="100" required></textarea>
+
   <button type="submit">Lisää kommentti</button>
 </form>
 
 <br><br>
+
 <a href="/">Takaisin etusivulle</a>

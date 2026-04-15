@@ -1,15 +1,13 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
-  <title>Uusi työvuoro</title>
-</head>
+{% block title %}Uusi työvuoro{% endblock %}
 
-<body>
+{% block content %}
 
 <h1>Uusi työvuoro</h1>
 
 <form action="/create_shift" method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
   <p>
     <label>Valitse kategoria (otsikko):</label><br>
@@ -25,18 +23,16 @@
   </p>
 
   <p>
-    Kuvaus: <br />
-    <textarea name="description" rows="8" cols="60"></textarea>
+    Kuvaus (max 100 merkkiä): <br />
+    <textarea name="description" rows="8" cols="60" maxlength="100"></textarea>
   </p>
 
   <p>
     Osallistujien määrä: <br />
-    <input type="number" name="participants" />
+    <input type="number" name="participants" max="100" min="1" required/>
   </p>
 
   <input type="submit" value="Luo työvuoro" />
-
 </form>
 
-</body>
-</html>
+{% endblock %}

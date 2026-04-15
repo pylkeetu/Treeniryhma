@@ -1,85 +1,90 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
-  <title>Työvuorojärjestelmä</title>
-</head>
+{% block title %}Työvuorojärjestelmä{% endblock %}
 
-<body>
-  <h1>Työvuorojärjestelmä</h1>
+{% block content %}
 
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      {% for category, message in messages %}
+<h1>Työvuorojärjestelmä</h1>
 
-      {% if category == "success" %}
-        <p style="color: green;">{{ message }}</p>
-      {% elif category == "error" %}
-        <p style="color: red;">{{ message }}</p>
-      {% endif %}
-
-      {% endfor %}
-    {% endif %}
-  {% endwith %}
-
-  {% if session.username %}
+{% if session.username %}
   <p>
-    Olet kirjautunut nimellä {{ session.username }}, ID-numerosi on {{ session.employee_id }}
-  </p>
-  <br>
-    <a href="/user/{{ session.employee_id }}">Oma sivu</a>
-  </p>
-  {% endif %}
-
-  <p>
-    {% if session.username %}
-      <a href="/logout">Kirjaudu ulos</a>
-    {% else %}
-      <a href="/login">Kirjaudu sisään</a>
-      <a href="/register">Luo tunnus</a>
-    {% endif %}
+    Olet kirjautunut nimellä {{ session.username }},
+    ID: {{ session.employee_id }}
   </p>
 
-  {% if session.username %}
+  <a href="/user/{{ session.employee_id }}">Oma sivu</a>
+{% endif %}
+
+<p>
+{% if session.username %}
+  <a href="/logout">Kirjaudu ulos</a>
+{% else %}
+  <a href="/login">Kirjaudu sisään</a>
+  <a href="/register">Luo tunnus</a>
+{% endif %}
+</p>
+
+{% if session.username %}
   <p>
     <a href="/new_shift">Uusi työvuoro</a>
   </p>
-  {% endif %}
-
-  <h2>Työvuorot</h2>
-
-  {% if session.username %}
-
-  <form method="GET" action="/">
-    <input type="text" name="q" placeholder="Etsi työvuoroja">
-    <button type="submit">Hae</button>
-  </form>
-
-  <ul>
-  {% for shift in shifts %}
-    <li>
-      <a href="/shift/{{ shift['id'] }}">
-        {{ shift['title'] }} - {{ shift['description'] }}
-      </a>
-{% if session.employee_id == shift['employee_id'] %}
-  | <a href="/shift/{{ shift['id'] }}/edit">Muokkaa</a>
-  | 
-  <form action="/shift/{{ shift['id'] }}/delete" method="POST" style="display:inline">
-      <button type="submit" onclick="return confirm('Haluatko varmasti poistaa tämän työvuoron?')">
-          Poista
-      </button>
-  </form>
 {% endif %}
-    </li>
-  {% endfor %}
+
+<h2>Työvuorot</h2>
+
+{% if session.username %}
+
+<form method="GET" action="/">
+  <input type="text" name="q" placeholder="Etsi työvuoroja">
+  <button type="submit">Hae</button>
+</form>
+
+<ul>
+{% for shift in shifts %}
+  <li>
+    <a href="/shift/{{ shift['id'] }}">
+      {{ shift['title'] }} - {{ shift['description'] }}
+    </a>
+
+    {% if session.employee_id == shift['employee_id'] %}
+      | <a href="/shift/{{ shift['id'] }}/edit">Muokkaa</a>
+
+      <form action="/shift/{{ shift['id'] }}/delete"
+            method="POST"
+            style="display:inline">
+
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <button type="submit"
+                onclick="return confirm('Haluatko varmasti poistaa tämän työvuoron?')">
+          Poista
+        </button>
+      </form>
+    {% endif %}
+  </li>
+{% endfor %}
 </ul>
 
 {% else %}
 
-  <p>Kirjaudu sisään nähdäksesi työvuorot.</p>
+<p>Kirjaudu sisään nähdäksesi työvuorot.</p>
 
 {% endif %}
 
-</body>
+{% if session.username %}
 
-</html>
+<h3>Käyttäjät</h3>
+
+<ul>
+{% for user in users %}
+  <li>
+    <a href="/user/{{ user.id }}">
+      {{ user.username }}
+    </a>
+  </li>
+{% endfor %}
+</ul>
+
+{% endif %}
+
+{% endblock %}

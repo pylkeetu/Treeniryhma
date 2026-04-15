@@ -1,10 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Käyttäjäsivu</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}Käyttäjäsivu{% endblock %}
+
+{% block content %}
+
+<h1>{{ user.username }}</h1>
 
 <h2>Käyttäjän tilastot</h2>
 
@@ -20,7 +20,7 @@
   </li>
 {% endfor %}
 </ul>
+
 <a href="/">Palaa etusivulle</a>
 
-</body>
-</html>
+{% endblock %}
