@@ -1,18 +1,18 @@
 {% extends "base.html" %}
 
-{% block title %}Työvuorojärjestelmä{% endblock %}
+{% block title %}Treeniryhmä{% endblock %}
 
 {% block content %}
 
-<h1>Työvuorojärjestelmä</h1>
+<h1>Treeniryhmä</h1>
 
 {% if session.username %}
   <p>
-    Olet kirjautunut nimellä {{ session.username }},
-    ID: {{ session.employee_id }}
+    Olet kirjautunut nimellä <b>{{ session.username }}</b>,
+    ID: {{ session.user_id }}
   </p>
 
-  <a href="/user/{{ session.employee_id }}">Oma sivu</a>
+  <a href="/user/{{ session.user_id }}">Oma sivu</a>
 {% endif %}
 
 <p>
@@ -26,40 +26,54 @@
 
 {% if session.username %}
   <p>
-    <a href="/new_shift">Uusi työvuoro</a>
+    <a href="/new_exercise">Luo uusi treeni</a>
   </p>
 {% endif %}
 
-<h2>Työvuorot</h2>
+<hr>
+
+<h2>Treeni-ilmoitukset</h2>
 
 {% if session.username %}
 
 <form method="GET" action="/">
-  <input type="text" name="q" placeholder="Etsi työvuoroja">
+  <input type="text" name="q" placeholder="Etsi treenejä">
   <button type="submit">Hae</button>
 </form>
 
+<br>
+
 <ul>
-{% for shift in shifts %}
+{% for exercise in exercises %}
   <li>
-    <a href="/shift/{{ shift['id'] }}">
-      {{ shift['title'] }} - {{ shift['description'] }}
+    <a href="/exercise/{{ exercise['id'] }}">
+      <b>{{ exercise['title'] }}</b>
     </a>
+    – {{ exercise['description'] }}
 
-    {% if session.employee_id == shift['employee_id'] %}
-      | <a href="/shift/{{ shift['id'] }}/edit">Muokkaa</a>
+    {% if session.user_id == exercise['user_id'] %}
 
-      <form action="/shift/{{ shift['id'] }}/delete"
+      <form action="/exercise/{{ exercise['id'] }}/edit"
+            method="GET"
+            style="display:inline">
+
+        <button type="submit">
+          Muokkaa
+        </button>
+      </form>
+
+      <form action="/exercise/{{ exercise['id'] }}/delete"
             method="POST"
             style="display:inline">
 
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 
         <button type="submit"
-                onclick="return confirm('Haluatko varmasti poistaa tämän työvuoron?')">
+                onclick="return confirm('Haluatko varmasti poistaa tämän treenin?')">
           Poista
         </button>
       </form>
+
     {% endif %}
   </li>
 {% endfor %}
@@ -67,7 +81,7 @@
 
 {% else %}
 
-<p>Kirjaudu sisään nähdäksesi työvuorot.</p>
+<p>Kirjaudu sisään nähdäksesi treenit.</p>
 
 {% endif %}
 

@@ -8,15 +8,22 @@
 
 <h2>Käyttäjän tilastot</h2>
 
-<p>Lisättyjä työvuoroja: {{ stats.count }}</p>
+<p>Lisättyjä treenejä: {{ stats.count }}</p>
 <p>Osallistujien keskiarvo: {{ stats.avg_participants | round(1) }}</p>
 
-<h3>Työvuorot</h3>
+<p>Osallistumisia muiden treeneihin: {{ join_count.count }}</p>
+
+<hr>
+
+<h3>Luodut treenit</h3>
 
 <ul>
-{% for shift in shifts %}
+{% for exercise in exercises %}
   <li>
-    {{ shift.title }} ({{ shift.participants }} osallistujaa)
+    <a href="/exercise/{{ exercise.id }}">
+      {{ exercise.title }}
+    </a>
+    (max {{ exercise.max_participants }} osallistujaa)
   </li>
 {% endfor %}
 </ul>

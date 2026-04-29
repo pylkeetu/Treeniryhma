@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Uusi treeni{% endblock %}
+
+{% block content %}
+
+<h1>Uusi treeni</h1>
+
+<form action="/create_exercise" method="post">
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+
+  <p><b>Valitse treenin tyyppi (otsikko):</b></p>
+
+  <div style="max-height: 120px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; width: 300px;">
+    {% for category in categories %}
+      <label style="display:block; margin-bottom:5px;">
+        <input type="radio" name="category" value="{{ category.id }}" required>
+        {{ category.name }}
+      </label>
+    {% endfor %}
+  </div>
+
+  <br>
+
+  <p>
+    <b>Kuvaus</b> (max 100 merkkiä):<br />
+    <textarea name="description" rows="6" maxlength="100" required></textarea>
+  </p>
+
+  <p>
+    <b>Max osallistujat:</b><br />
+    <input type="number" name="participants" min="1" max="100" required />
+  </p>
+
+  <br>
+
+  <button type="submit">Luo treeni</button>
+</form>
+
+{% endblock %}

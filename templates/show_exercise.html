@@ -1,0 +1,96 @@
+<h1>{{ exercise.title }}</h1>
+
+<p>{{ exercise.description }}</p>
+
+<p><b>Treenin luoja:</b> {{ exercise.username }}</p>
+<p><b>Ilmoitettu maksimiosallistujamäärä:</b> {{ exercise.max_participants }}</p>
+
+<hr>
+
+<h3>Osallistujat</h3>
+
+{% if participants|length == 0 %}
+  <p>Ei osallistujia vielä</p>
+{% else %}
+  <ul>
+  {% for p in participants %}
+    <li>{{ p.username }}</li>
+  {% endfor %}
+  </ul>
+{% endif %}
+
+<p>
+  <b>Osallistujat:</b> {{ participants|length }} / {{ exercise.max_participants }}
+</p>
+
+{% if session.user_id and session.user_id != exercise.user_id %}
+
+<hr>
+
+<h3>Osallistu treeniin</h3>
+
+  {% if not is_participant %}
+    <form method="POST" action="/exercise/{{ exercise.id }}/join">
+      <button type="submit">Osallistu</button>
+    </form>
+  {% else %}
+    <p>✔ Olet jo mukana tässä treenissä</p>
+  {% endif %}
+
+{% endif %}
+
+<hr>
+
+<h3>Kommentit</h3>
+
+{% if comments|length == 0 %}
+  <p>Ei kommentteja vielä</p>
+{% endif %}
+
+<ul>
+{% for comment in comments %}
+  <li>
+    <b>{{ comment.username }}</b>:
+    {{ comment.content }}
+    <small>({{ comment.created_at | localtime }})</small>
+  </li>
+{% endfor %}
+</ul>
+
+<form method="POST" action="/exercise/{{ exercise.id }}/comment">
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+
+  <textarea name="content" maxlength="100" required></textarea>
+  <button type="submit">Lisää kommentti</button>
+</form>
+
+{% if session.user_id and session.user_id == exercise.user_id %}
+
+<hr>
+
+<h3>Hallinta</h3>
+
+<div style="display:flex; gap:10px;">
+
+  <form action="/exercise/{{ exercise.id }}/edit" method="GET">
+    <button type="submit"
+            style="cursor:pointer;">
+      Muokkaa
+    </button>
+  </form>
+
+  <form action="/exercise/{{ exercise.id }}/delete" method="POST">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+
+    <button type="submit"
+            onclick="return confirm('Haluatko varmasti poistaa tämän treenin?')"
+            style="cursor:pointer;">
+      Poista
+    </button>
+  </form>
+{% endif %}
+</div>
+
+<br><br>
+
+<a href="/">Takaisin etusivulle</a>

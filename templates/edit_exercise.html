@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Muokkaa treeniä{% endblock %}
+
+{% block content %}
+
+<h1>Muokkaa treeniä</h1>
+
+<form action="/exercise/{{ exercise['id'] }}/edit" method="POST">
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+
+  <label>Treeni (kategoria / otsikko):</label><br>
+
+  <div style="max-height: 120px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; width: 300px;">
+    {% for category in categories %}
+      <label style="display:block; margin-bottom:5px;">
+        <input type="radio"
+               name="category"
+               value="{{ category.id }}"
+               {% if category.name == exercise['title'] %}checked{% endif %}
+               required>
+        {{ category.name }}
+      </label>
+    {% endfor %}
+  </div>
+
+  <br>
+
+  <label>Kuvaus:</label><br>
+  <textarea name="description"
+            rows="5"
+            maxlength="100"
+            required>{{ exercise['description'] }}</textarea>
+
+  <br><br>
+
+  <label>Max osallistujat:</label><br>
+  <input type="number"
+         name="participants"
+         value="{{ exercise['max_participants'] }}"
+         min="1"
+         max="100"
+         required>
+
+  <br><br>
+
+  <button type="submit">Tallenna muutokset</button>
+</form>
+
+<br>
+
+<a href="/exercise/{{ exercise['id'] }}">← Peruuta</a>
+
+{% endblock %}

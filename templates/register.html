@@ -4,8 +4,8 @@
 
 {% block content %}
 
-<form action="/create" method="post">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<form action="/register" method="post">
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 
   <p>
     Tunnus: <br />
