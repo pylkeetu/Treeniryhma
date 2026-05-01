@@ -14,7 +14,8 @@ Tämänhetkinen tilanne:
 - Sovellukseen pystyy lisäämään treenejä, joihin muilla käyttäjillä on mahdollisuus osallistua.
 - Harjoituksia pystyy myös kommentoimaan eli antamaan palautetta, tai kysymään kysymyksiä ennen tai jälkeen harjoituksen.
 - Käyttäjillä on myös oma sivu, jossa näkyy tilastoja: Lisätyt treenit, osallistujien keskiarvo, sekä muiden treeneihin osallistumiset.
-- Seuraavaksi on tarkoituksena lisätä mahdollisuus myös poistaa ilmoittautuminen, sekä muokata käyttöliittymä siistimmäksi. 
+- Sovelluksen ulkoasu viimeistelty css-avulla
+- Kaikki perusvaatimukset täyttyvät
 
 Asennusohjeet:
 - Kloonaa repositorio: git clone https://github.com/pylkeetu/Tyovuorojarjestelma.git
