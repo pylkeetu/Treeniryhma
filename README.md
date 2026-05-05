@@ -18,8 +18,8 @@ Tämänhetkinen tilanne:
 - Kaikki perusvaatimukset täyttyvät
 
 Asennusohjeet:
-- Kloonaa repositorio: git clone https://github.com/pylkeetu/Tyovuorojarjestelma.git
-- Siirry projektikansioon: cd Tyovuorojarjestelma
+- Kloonaa repositorio: git clone https://github.com/pylkeetu/Treeniryhma.git
+- Siirry projektikansioon: cd Treeniryhma
 - Luo virtuaaliympäristö: python -m venv venv
 - Aktivoi virtuaaliympäristö: venv\Scripts\activate (Windows)
 - Aktivoi virtuaaliympäristö: source venv/bin/activate (Mac/Linux)
